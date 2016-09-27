@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Bug fix: Reload footprint -->
+  <rosparam command="delete" ns="move_base" />
+
+  <!--- Run AMCL -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <remap from="/scan" to="/hokuyo/scan"/>
+  </node>
+  <!-- <include file="$(find advanrobot_navigation)/launch/advanrobot_amcl.launch" /> -->
+
+  <!-- Run map_server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find advanrobot_navigation)/maps/map.yaml"/>
+
+  <!-- Run move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+      <remap from="odom" to="odom"/>
+      <remap from="cmd_vel" to="/rb1/mobile_base_controller/cmd_vel"/>
+      <rosparam file="$(find advanrobot_navigation)/config/advanrobot.yaml" command="load" />
+  </node>
+
+</launch>
